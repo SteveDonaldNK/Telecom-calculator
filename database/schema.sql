@@ -1,7 +1,7 @@
--- Base de données pour l'application de calcul de débit télécoms
+-- Base de données pour l'application OptiLink
 -- Création de la base de données
-CREATE DATABASE IF NOT EXISTS telecom_calculator CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE telecom_calculator;
+CREATE DATABASE IF NOT EXISTS optilink CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE optilink;
 
 -- Table des utilisateurs
 CREATE TABLE users (

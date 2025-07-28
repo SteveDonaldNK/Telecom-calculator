@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialise le formulaire des paramètres
  */
 function initializeParametersForm() {
-    // Configuration des bandes passantes LTE avec leurs débits
+    // Configuration des bandes passantes LTE avec leurs débits (valeurs corrigées)
     const lteConfig = {
-        5: { throughput: 21.6, description: '5 MHz - Bande étroite' },
+        5: { throughput: 24.6, description: '5 MHz - Bande étroite' },        // Corrigé
         10: { throughput: 50.7, description: '10 MHz - Bande standard' },
-        15: { throughput: 74.5, description: '15 MHz - Bande large' },
+        15: { throughput: 76.5, description: '15 MHz - Bande large' },        // Corrigé  
         20: { throughput: 102.9, description: '20 MHz - Bande très large' }
     };
     
@@ -33,7 +33,7 @@ function initializeParametersForm() {
 }
 
 /**
- * Met à jour les descriptions des bandes passantes
+ * Met à jour les descriptions des bandes passantes (sans débits)
  */
 function updateBandwidthDescriptions() {
     const bandwidthSelect = document.getElementById('bandwidth_mhz');
@@ -43,7 +43,7 @@ function updateBandwidthDescriptions() {
             const value = parseFloat(option.value);
             if (window.lteConfig[value]) {
                 const config = window.lteConfig[value];
-                option.textContent = `${value} MHz (${config.throughput} Mbps)`;
+                option.textContent = `${value} MHz`; // Supprimer les débits entre parenthèses
                 option.title = config.description;
             }
         });
@@ -54,9 +54,9 @@ function updateBandwidthDescriptions() {
  * Définit les valeurs par défaut du formulaire
  */
 function setDefaultValues() {
-    const transportEfficiency = document.getElementById('transport_efficiency');
-    if (transportEfficiency && !transportEfficiency.value) {
-        transportEfficiency.value = '0.95';
+    const extensionRatio = document.getElementById('extension_ratio');
+    if (extensionRatio && !extensionRatio.value) {
+        extensionRatio.value = '1.16'; // Valeur fixe pour Extension Ratio
     }
 }
 
@@ -204,16 +204,23 @@ function animatePreviewUpdate() {
  */
 function setupFormValidation() {
     const form = document.querySelector('.parameters-form');
-    if (!form) return;
+    if (!form) {
+        console.log('Form not found');
+        return;
+    }
     
     form.addEventListener('submit', function(e) {
+        console.log('Form submit event triggered');
         if (!validateForm()) {
             e.preventDefault();
+            console.log('Form validation failed');
             showFormError('Veuillez corriger les erreurs avant de continuer');
         } else {
+            console.log('Form validation passed, submitting...');
             // Afficher un indicateur de chargement
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
+                console.log('Showing loading indicator');
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
                 submitButton.disabled = true;
             }

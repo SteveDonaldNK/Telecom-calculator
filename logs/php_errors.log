@@ -1,0 +1,38 @@
+[28-Jul-2025 16:18:52 UTC] Test log message
+[28-Jul-2025 16:18:52 UTC] Test 2 log message
+[28-Jul-2025 16:19:53 UTC] Test log message
+[28-Jul-2025 16:19:53 UTC] Test log message
+[28-Jul-2025 16:19:55 UTC] Test log message
+[28-Jul-2025 16:19:55 UTC] Test log message
+[28-Jul-2025 16:20:43 UTC] Test log message
+[28-Jul-2025 16:20:43 UTC] Test log message
+[28-Jul-2025 16:20:46 UTC] Test log message
+[28-Jul-2025 16:20:46 UTC] Test log message
+[28-Jul-2025 16:36:55 UTC] POST request received
+[28-Jul-2025 16:36:55 UTC] Input values: frequency=2100, bandwidth=15, extension_ratio=1.16
+[28-Jul-2025 16:36:55 UTC] Validation passed, performing calculations
+[28-Jul-2025 16:36:55 UTC] Database connection established
+[28-Jul-2025 16:36:55 UTC] Database insertion successful
+[28-Jul-2025 16:36:55 UTC] Session data set, redirecting to results.php
+[28-Jul-2025 16:37:21 UTC] POST request received
+[28-Jul-2025 16:37:21 UTC] Input values: frequency=2100, bandwidth=15, extension_ratio=1.16
+[28-Jul-2025 16:37:21 UTC] Validation passed, performing calculations
+[28-Jul-2025 16:37:21 UTC] Database connection established
+[28-Jul-2025 16:37:21 UTC] Database insertion successful
+[28-Jul-2025 16:37:21 UTC] Session data set, redirecting to results.php
+[28-Jul-2025 16:37:36 UTC] POST request received
+[28-Jul-2025 16:37:36 UTC] Input values: frequency=2600, bandwidth=10, extension_ratio=1.16
+[28-Jul-2025 16:37:36 UTC] Validation passed, performing calculations
+[28-Jul-2025 16:37:36 UTC] Database connection established
+[28-Jul-2025 16:37:36 UTC] Database insertion successful
+[28-Jul-2025 16:37:36 UTC] Session data set, redirecting to results.php
+[28-Jul-2025 16:38:58 UTC] PHP Warning:  Undefined array key "extension_ratio" in /home/guigui2401/Documents/Dev/Network_Flow_Calculator_App/results.php on line 104
+[28-Jul-2025 16:38:58 UTC] PHP Warning:  Undefined array key "extension_ratio" in /home/guigui2401/Documents/Dev/Network_Flow_Calculator_App/results.php on line 127
+[28-Jul-2025 16:38:58 UTC] PHP Warning:  Undefined array key "s1_throughput" in /home/guigui2401/Documents/Dev/Network_Flow_Calculator_App/results.php on line 148
+[28-Jul-2025 16:38:58 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/guigui2401/Documents/Dev/Network_Flow_Calculator_App/results.php on line 148
+[28-Jul-2025 16:42:38 UTC] POST request received
+[28-Jul-2025 16:42:38 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[28-Jul-2025 16:42:38 UTC] Validation passed, performing calculations
+[28-Jul-2025 16:42:38 UTC] Database connection established
+[28-Jul-2025 16:42:38 UTC] Database insertion successful
+[28-Jul-2025 16:42:38 UTC] Session data set, redirecting to results.php

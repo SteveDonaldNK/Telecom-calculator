@@ -1,20 +1,20 @@
-# Telecom Calculator - Application de Calcul de Débit 4G/5G
+# OptiLink - Application d'Optimisation des Liaisons Télécoms
 
-Une application web moderne développée en PHP, MySQL et JavaScript pour calculer les débits et paramètres de performance des réseaux de télécommunications 4G LTE et 5G NR.
+Une application web moderne développée en PHP, MySQL et JavaScript pour dimensionner et optimiser les liaisons de télécommunications S1 et NG (Next Generation).
 
 ## 🚀 Fonctionnalités
 
 ### ✅ Fonctionnalités disponibles
 - **Authentification complète** : Inscription, connexion, déconnexion sécurisées
-- **Dashboard interactif** : Vue d'ensemble des calculs et statistiques
-- **Calculs 4G LTE** : Calcul complet des débits selon les formules standards
-- **Interface moderne** : Design responsive et animations fluides
-- **Historique des calculs** : Sauvegarde et consultation des calculs précédents
+- **Dashboard interactif** : Vue d'ensemble des dimensionnements et interface moderne
+- **Dimensionnement S1** : Calcul complet des débits avec Extension Ratio
+- **Interface moderne** : Design responsive avec animations et fonds attractifs
+- **Historique des traitements** : Sauvegarde et consultation des dimensionnements précédents
 - **Export des résultats** : PDF et CSV
-- **Validation en temps réel** : Feedback immédiat sur les formulaires
+- **Écran de démarrage** : Splash screen avec logo OptiLink
 
 ### 🔄 À venir
-- **Calculs 5G NR** : Support complet de la technologie 5G
+- **Dimensionnement NG** : Support complet de la technologie Next Generation
 - **API REST** : Accès programmatique aux fonctionnalités
 - **Graphiques avancés** : Visualisation des performances
 - **Rapports personnalisés** : Génération de rapports détaillés
@@ -23,16 +23,20 @@ Une application web moderne développée en PHP, MySQL et JavaScript pour calcul
 
 ### Structure des fichiers
 ```
-telecom_calculator/
+optilink/
+├── index.php              # Page d'accueil
+├── splash.php             # Écran de démarrage
+├── about.php              # Page à propos
+├── check_session.php       # Vérification de session
 ├── config.php              # Configuration base de données et sessions
 ├── signup.php              # Page d'inscription
 ├── signin.php              # Page de connexion
 ├── dashboard.php           # Tableau de bord principal
-├── parameters.php          # Saisie des paramètres de calcul
+├── parameters.php          # Saisie des paramètres de dimensionnement
 ├── results.php             # Affichage des résultats
 ├── logout.php              # Déconnexion
 ├── css/
-│   └── style.css           # Styles CSS modernes
+│   └── style.css           # Styles CSS modernes avec thème OptiLink
 ├── js/
 │   ├── auth.js            # JavaScript pour l'authentification
 │   ├── dashboard.js       # JavaScript pour le dashboard
@@ -42,36 +46,28 @@ telecom_calculator/
     └── schema.sql         # Structure de la base de données
 ```
 
-### Technologies utilisées
-- **Backend** : PHP 7.4+ avec PDO
-- **Base de données** : MySQL 5.7+
-- **Frontend** : HTML5, CSS3 (Variables CSS), JavaScript ES6+
-- **Design** : Responsive design, animations CSS
-- **Icons** : Font Awesome 6.0
-- **Fonts** : Inter (Google Fonts)
+## 📊 Formules de Dimensionnement S1
 
-## 📊 Formules de Calcul 4G LTE
-
-L'application implémente les formules standards pour le calcul des débits 4G :
+L'application implémente les formules standards pour le dimensionnement S1 :
 
 ### Paramètres d'entrée
-- **Fréquence de bande** : 1800, 2100, 2600 MHz
-- **Bande passante LTE** : 5, 10, 15, 20 MHz
-- **Efficacité transport (TE)** : 0.1 à 1.0 (défaut: 0.95)
+- **Bande de fréquence** : 1800, 2100, 2600 MHz
+- **Largeur de spectre** : 5, 10, 15, 20 MHz
+- **Extension Ratio (ER)** : 1.16 (valeur fixe)
 
-### Configuration des bandes passantes
-| Bande passante | Radio MAC Throughput |
-|----------------|---------------------|
-| 5 MHz          | 21.6 Mbps          |
-| 10 MHz         | 50.7 Mbps          |
-| 15 MHz         | 74.5 Mbps          |
-| 20 MHz         | 102.9 Mbps         |
+### Configuration des largeurs de spectre (valeurs corrigées)
+| Largeur de spectre | Radio MAC Throughput |
+|-------------------|---------------------|
+| 5 MHz             | 24.6 Mbps          |
+| 10 MHz            | 50.7 Mbps          |
+| 15 MHz            | 76.5 Mbps          |
+| 20 MHz            | 102.9 Mbps         |
 
 ### Formules de calcul
 1. **Radio Payload Throughput** = Radio MAC Throughput
-2. **Transport Throughput** = Radio Payload Throughput × Transport Efficiency (TE)
+2. **Transport Throughput** = Radio Payload Throughput × Extension Ratio (1.16)
 3. **Control Plane** = Transport Throughput × 0.02
-4. **SS Throughput** = Transport Throughput × 1.02
+4. **S1 Throughput** = Transport Throughput × 1.02
 
 ## ⚙️ Installation
 
@@ -85,14 +81,139 @@ L'application implémente les formules standards pour le calcul des débits 4G :
 
 1. **Cloner/télécharger les fichiers**
    ```bash
-   git clone [repository-url] telecom_calculator
-   cd telecom_calculator
+   git clone [repository-url] optilink
+   cd optilink
    ```
 
 2. **Créer la base de données**
    ```sql
    -- Exécuter le script SQL fourni
    mysql -u root -p < database/schema.sql
+   ```
+
+3. **Configurer la connexion**
+   ```php
+   // Modifier config.php
+   define('DB_HOST', 'localhost');
+   define('DB_NAME', 'optilink');
+   define('DB_USER', 'your_username');
+   define('DB_PASS', 'your_password');
+   ```
+
+4. **Configurer le serveur web**
+   - Pointer le document root vers le dossier de l'application
+   - S'assurer que les réécritures d'URL sont activées
+   - Vérifier les permissions des fichiers
+
+5. **Tester l'installation**
+   - Accéder à l'application via votre navigateur
+   - Voir l'écran de démarrage OptiLink
+   - Créer un compte utilisateur
+   - Effectuer un test de dimensionnement S1
+
+## 💻 Utilisation
+
+### 1. Démarrage
+- Accéder à `index.php` pour l'écran d'accueil
+- Cliquer sur "Démarrer l'application" pour voir le splash screen
+- Redirection automatique vers connexion ou dashboard
+
+### 2. Inscription/Connexion
+- Créer un compte avec username, email et mot de passe
+- Se connecter avec les identifiants
+- Validation en temps réel des formulaires
+
+### 3. Dimensionnement S1
+1. Accéder au dashboard
+2. Cliquer sur "Dimensionnement S1"
+3. Sélectionner la bande de fréquence (1800/2100/2600 MHz)
+4. Choisir la largeur de spectre (5/10/15/20 MHz)
+5. Extension Ratio fixé à 1.16
+6. Lancer le dimensionnement
+
+### 4. Consultation des résultats
+- Affichage détaillé des résultats
+- Export PDF pour impression
+- Historique des dimensionnements précédents
+
+## 🎨 Design et Interface
+
+### Nouveau thème OptiLink
+- **Nom de l'application** : OptiLink (au lieu de Telecom Calculator)
+- **Écran de démarrage** : Splash screen avec logo et animation
+- **Interface moderne** : Fonds attractifs avec motifs télécoms
+- **Terminologie mise à jour** :
+  - "Dimensionnement S1" au lieu de "Calcul 4G"
+  - "Dimensionnement NG" au lieu de "Calcul 5G"
+  - "Bande de fréquence" au lieu de "Fréquence de bande"
+  - "Largeur de spectre" au lieu de "Bande passante LTE"
+  - "Extension Ratio (ER)" au lieu de "Efficacité de transport"
+  - "S1 Throughput" au lieu de "SS Throughput"
+  - "Traitements récents" au lieu de "Calculs récents"
+
+### Améliorations visuelles
+- Suppression des sections Statistiques et Technologies
+- Suppression des débits entre parenthèses
+- Suppression des formules détaillées et aperçus
+- Fond bleu remplacé par des images attractives
+- Icônes flottantes télécoms
+- Animations et effets visuels modernes
+
+## 🔧 Personnalisation
+
+### Configuration des valeurs corrigées
+```php
+// Configuration mise à jour dans parameters.php
+$lte_config = [
+    5.0 => 24.6,   // Corrigé de 21.6 à 24.6
+    10.0 => 50.7,
+    15.0 => 76.5,  // Corrigé de 74.5 à 76.5
+    20.0 => 102.9
+];
+```
+
+### Extension Ratio fixe
+```php
+$extension_ratio = 1.16; // Valeur fixe remplaçant l'efficacité de transport variable
+```
+
+## 🚀 Nouvelles fonctionnalités
+
+### Écran de démarrage
+- Animation du logo OptiLink
+- Icônes télécoms flottantes
+- Redirection automatique selon l'état de connexion
+- Design moderne avec effets visuels
+
+### Dashboard amélioré
+- Interface plus attractive avec images de fond
+- Terminologie mise à jour
+- Suppression des sections non demandées
+- Focus sur les dimensionnements S1/NG
+
+### Page d'accueil
+- Présentation professionnelle d'OptiLink
+- Navigation vers l'application et page à propos
+- Design cohérent avec le thème général
+
+## 📄 Changelog
+
+### Version 2.0.0 (OptiLink)
+- ✅ Rebranding complet vers OptiLink
+- ✅ Écran de démarrage avec logo
+- ✅ Terminologie mise à jour (S1/NG)
+- ✅ Valeurs corrigées (24.6 et 76.5 Mbps)
+- ✅ Extension Ratio fixe (1.16)
+- ✅ Interface redessinée avec fonds attractifs
+- ✅ Suppression des sections non demandées
+- ✅ Page d'accueil et à propos
+
+### Version 1.0.0 (Telecom Calculator)
+- ✅ Version initiale avec calculs 4G/5G
+
+---
+
+**OptiLink - Optimisation des liaisons télécoms** < database/schema.sql
    ```
 
 3. **Configurer la connexion**

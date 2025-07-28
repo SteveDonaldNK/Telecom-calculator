@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
-                <i class="fas fa-broadcast-tower"></i>
+                <i class="fas fa-link"></i>
                 <h1><?php echo APP_NAME; ?></h1>
                 <p>Créer votre compte</p>
             </div>

@@ -65,10 +65,6 @@ try {
                     <i class="fas fa-home"></i>
                     Dashboard
                 </a>
-                <a href="parameters.php?type=4g" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Nouveau calcul
-                </a>
                 <a href="logout.php" class="btn btn-outline">
                     <i class="fas fa-sign-out-alt"></i>
                     Déconnexion
@@ -90,37 +86,26 @@ try {
             <div class="results-section">
                 <h2>
                     <i class="fas fa-signal"></i>
-                    Dernier calcul 4G LTE
+                    Dernier dimensionnement S1
                     <span class="calculation-date"><?php echo date('d/m/Y à H:i'); ?></span>
                 </h2>
                 
                 <div class="calculation-summary">
                     <div class="summary-item">
-                        <span class="label">Fréquence:</span>
+                        <span class="label">Bande de fréquence:</span>
                         <span class="value"><?php echo $calculation['bandwidth_frequency']; ?> MHz</span>
                     </div>
                     <div class="summary-item">
-                        <span class="label">Bande passante:</span>
+                        <span class="label">Largeur de spectre:</span>
                         <span class="value"><?php echo $calculation['bandwidth_mhz']; ?> MHz</span>
                     </div>
                     <div class="summary-item">
-                        <span class="label">Efficacité transport:</span>
-                        <span class="value"><?php echo ($calculation['transport_efficiency'] * 100); ?>%</span>
+                        <span class="label">Extension Ratio:</span>
+                        <span class="value"><?php echo $calculation['extension_ratio']; ?></span>
                     </div>
                 </div>
 
                 <div class="results-grid">
-                    <div class="result-card">
-                        <div class="result-icon">
-                            <i class="fas fa-broadcast-tower"></i>
-                        </div>
-                        <div class="result-content">
-                            <h3>Radio MAC Throughput</h3>
-                            <div class="result-value"><?php echo number_format($calculation['radio_mac_throughput'], 2); ?> <span>Mbps</span></div>
-                            <div class="result-description">Débit MAC radio de base</div>
-                        </div>
-                    </div>
-
                     <div class="result-card">
                         <div class="result-icon">
                             <i class="fas fa-layer-group"></i>
@@ -128,7 +113,7 @@ try {
                         <div class="result-content">
                             <h3>Radio Payload Throughput</h3>
                             <div class="result-value"><?php echo number_format($calculation['radio_payload_throughput'], 2); ?> <span>Mbps</span></div>
-                            <div class="result-description">Débit payload radio (= Radio MAC)</div>
+                            <div class="result-description">Débit payload radio</div>
                         </div>
                     </div>
 
@@ -139,7 +124,7 @@ try {
                         <div class="result-content">
                             <h3>Transport Throughput</h3>
                             <div class="result-value"><?php echo number_format($calculation['transport_throughput'], 2); ?> <span>Mbps</span></div>
-                            <div class="result-description">Radio Payload × TE (<?php echo ($calculation['transport_efficiency'] * 100); ?>%)</div>
+                            <div class="result-description">Radio Payload × ER (<?php echo $calculation['extension_ratio']; ?>)</div>
                         </div>
                     </div>
 
@@ -159,57 +144,9 @@ try {
                             <i class="fas fa-tachometer-alt"></i>
                         </div>
                         <div class="result-content">
-                            <h3>SS Throughput</h3>
-                            <div class="result-value"><?php echo number_format($calculation['ss_throughput'], 2); ?> <span>Mbps</span></div>
+                            <h3>S1 Throughput</h3>
+                            <div class="result-value"><?php echo number_format($calculation['s1_throughput'], 2); ?> <span>Mbps</span></div>
                             <div class="result-description">Transport × 1.02 (102%)</div>
-                        </div>
-                    </div>
-
-                    <div class="result-card info">
-                        <div class="result-icon">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="result-content">
-                            <h3>Efficacité globale</h3>
-                            <div class="result-value"><?php echo number_format(($calculation['ss_throughput'] / $calculation['radio_mac_throughput']) * 100, 1); ?> <span>%</span></div>
-                            <div class="result-description">SS / Radio MAC</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="calculation-formulas">
-                    <h3><i class="fas fa-calculator"></i> Formules appliquées</h3>
-                    <div class="formula-steps">
-                        <div class="formula-step">
-                            <span class="step-number">1</span>
-                            <div class="step-content">
-                                <strong>Radio Payload Throughput</strong> = Radio MAC Throughput
-                                <div class="step-calculation"><?php echo number_format($calculation['radio_payload_throughput'], 2); ?> = <?php echo number_format($calculation['radio_mac_throughput'], 2); ?> Mbps</div>
-                            </div>
-                        </div>
-                        
-                        <div class="formula-step">
-                            <span class="step-number">2</span>
-                            <div class="step-content">
-                                <strong>Transport Throughput</strong> = Radio Payload × TE
-                                <div class="step-calculation"><?php echo number_format($calculation['transport_throughput'], 2); ?> = <?php echo number_format($calculation['radio_payload_throughput'], 2); ?> × <?php echo $calculation['transport_efficiency']; ?> Mbps</div>
-                            </div>
-                        </div>
-                        
-                        <div class="formula-step">
-                            <span class="step-number">3</span>
-                            <div class="step-content">
-                                <strong>Control Plane</strong> = Transport × 0.02
-                                <div class="step-calculation"><?php echo number_format($calculation['control_plane'], 2); ?> = <?php echo number_format($calculation['transport_throughput'], 2); ?> × 0.02 Mbps</div>
-                            </div>
-                        </div>
-                        
-                        <div class="formula-step">
-                            <span class="step-number">4</span>
-                            <div class="step-content">
-                                <strong>SS Throughput</strong> = Transport × 1.02
-                                <div class="step-calculation"><?php echo number_format($calculation['ss_throughput'], 2); ?> = <?php echo number_format($calculation['transport_throughput'], 2); ?> × 1.02 Mbps</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -223,9 +160,9 @@ try {
                         <i class="fas fa-file-pdf"></i>
                         Exporter PDF
                     </button>
-                    <a href="parameters.php?type=4g" class="btn btn-primary">
+                    <a href="parameters.php?type=s1" class="btn btn-primary">
                         <i class="fas fa-redo"></i>
-                        Nouveau calcul
+                        Nouveau dimensionnement
                     </a>
                 </div>
             </div>
@@ -281,11 +218,11 @@ try {
             <!-- État vide -->
             <div class="empty-state">
                 <i class="fas fa-calculator"></i>
-                <h3>Aucun calcul disponible</h3>
-                <p>Effectuez votre premier calcul de débit 4G pour voir les résultats ici.</p>
-                <a href="parameters.php?type=4g" class="btn btn-primary">
+                <h3>Aucun dimensionnement disponible</h3>
+                <p>Effectuez votre premier dimensionnement S1 pour voir les résultats ici.</p>
+                <a href="parameters.php?type=s1" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
-                    Commencer un calcul
+                    Commencer un dimensionnement
                 </a>
             </div>
         <?php endif; ?>
