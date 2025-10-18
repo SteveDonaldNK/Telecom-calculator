@@ -26,7 +26,7 @@ chmod($log_file, 0666); // Ensure log file is writable by web server
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'optilink');
 define('DB_USER', 'root'); // À modifier selon ta configuration
-define('DB_PASS', '123@bc9Z');     // À modifier selon ta configuration
+define('DB_PASS', '');     // À modifier selon ta configuration
 
 // Classe pour la gestion de la base de données
 class Database {

@@ -39,8 +39,7 @@ try {
         .dashboard-hero {
             position: relative;
             height: 300px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)),
-                        url('images/background.jpg');
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
             background-size: cover;
             background-position: center;
             border-radius: var(--radius-lg);
@@ -425,32 +424,6 @@ try {
         </div>
 
         <div class="dashboard-grid">
-            <!-- Section Dimensionnements -->
-            <div class="dashboard-section">
-                <h2><i class="fas fa-calculator"></i> Dimensionnements</h2>
-                <div class="calculation-buttons">
-                    <a href="parameters.php?type=s1" class="calc-card calc-s1">
-                        <div class="calc-icon">
-                            <i class="fas fa-signal"></i>
-                        </div>
-                        <div class="calc-content">
-                            <h3>Dimensionnement S1</h3>
-                            <span class="calc-status available">Disponible</span>
-                        </div>
-                    </a>
-                    
-                    <div class="calc-card calc-ng disabled">
-                        <div class="calc-icon">
-                            <i class="fas fa-wifi"></i>
-                        </div>
-                        <div class="calc-content">
-                            <h3>Dimensionnement NG</h3>
-                            <span class="calc-status coming-soon">Fonctionnalités à venir</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Section Traitements récents -->
             <div class="dashboard-section full-width treatments-section">
                 <h2><i class="fas fa-history"></i> Traitements récents</h2>
@@ -503,6 +476,31 @@ try {
                         </a>
                     </div>
                 <?php endif; ?>
+            </div>
+            <!-- Section Dimensionnements -->
+            <div class="dashboard-section">
+                <h2><i class="fas fa-calculator"></i> Dimensionnements</h2>
+                <div class="calculation-buttons flex-column">
+                    <a href="parameters.php?type=s1" class="calc-card calc-s1">
+                        <div class="calc-icon">
+                            <i class="fas fa-signal"></i>
+                        </div>
+                        <div class="calc-content">
+                            <h3>Dimensionnement S1</h3>
+                            <span class="calc-status available">Disponible</span>
+                        </div>
+                    </a>
+                    
+                    <div class="calc-card calc-ng disabled">
+                        <div class="calc-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <div class="calc-content">
+                            <h3>Dimensionnement NG</h3>
+                            <span class="calc-status coming-soon">Fonctionnalités à venir</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

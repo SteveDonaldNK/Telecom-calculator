@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $type === 's1') {
                 $control_plane,
                 $s1_throughput
             ]);
+            $last_id = $pdo->lastInsertId();
             error_log('Database insertion successful');
             
             // Stocker les résultats en session pour l'affichage
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $type === 's1') {
                 's1_throughput' => $s1_throughput
             ];
             error_log('Session data set, redirecting to results.php');
-            redirectTo('results.php');
+            redirectTo('results.php?id=' . $last_id);
             
         } catch (PDOException $e) {
             $error = 'Erreur lors de la sauvegarde: ' . $e->getMessage();

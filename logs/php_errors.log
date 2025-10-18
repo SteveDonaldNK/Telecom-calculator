@@ -36,3 +36,240 @@
 [28-Jul-2025 16:42:38 UTC] Database connection established
 [28-Jul-2025 16:42:38 UTC] Database insertion successful
 [28-Jul-2025 16:42:38 UTC] Session data set, redirecting to results.php
+[04-Sep-2025 14:11:32 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+[04-Sep-2025 14:11:32 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+[04-Sep-2025 14:12:38 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+[04-Sep-2025 14:12:39 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+[04-Sep-2025 14:12:40 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+[04-Sep-2025 14:19:11 UTC] POST request received
+[04-Sep-2025 14:19:11 UTC] Input values: frequency=2600, bandwidth=10, extension_ratio=1.16
+[04-Sep-2025 14:19:11 UTC] Validation passed, performing calculations
+[04-Sep-2025 14:19:11 UTC] Database connection established
+[04-Sep-2025 14:19:11 UTC] Database insertion successful
+[04-Sep-2025 14:19:11 UTC] Session data set, redirecting to results.php
+[04-Sep-2025 14:54:09 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[04-Sep-2025 14:54:09 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:09 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:09 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[04-Sep-2025 14:54:09 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:09 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:09 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 14:54:09 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:09 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:09 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 14:54:09 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:09 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:09 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[04-Sep-2025 14:54:33 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[04-Sep-2025 14:54:33 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:33 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:33 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[04-Sep-2025 14:54:33 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:33 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:33 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 14:54:33 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:33 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:33 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 14:54:33 UTC] PHP Stack trace:
+[04-Sep-2025 14:54:33 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 14:54:33 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[04-Sep-2025 16:13:59 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[04-Sep-2025 16:13:59 UTC] PHP Stack trace:
+[04-Sep-2025 16:13:59 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 16:13:59 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[04-Sep-2025 16:13:59 UTC] PHP Stack trace:
+[04-Sep-2025 16:13:59 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 16:13:59 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 16:13:59 UTC] PHP Stack trace:
+[04-Sep-2025 16:13:59 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 16:13:59 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[04-Sep-2025 16:13:59 UTC] PHP Stack trace:
+[04-Sep-2025 16:13:59 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[04-Sep-2025 16:13:59 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 14:51:42 UTC] POST request received
+[24-Sep-2025 14:51:42 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[24-Sep-2025 14:51:42 UTC] Validation passed, performing calculations
+[24-Sep-2025 14:51:42 UTC] Database connection established
+[24-Sep-2025 14:51:42 UTC] Database insertion successful
+[24-Sep-2025 14:51:42 UTC] Session data set, redirecting to results.php
+[24-Sep-2025 14:52:25 UTC] POST request received
+[24-Sep-2025 14:52:25 UTC] Input values: frequency=2100, bandwidth=15, extension_ratio=1.16
+[24-Sep-2025 14:52:25 UTC] Validation passed, performing calculations
+[24-Sep-2025 14:52:25 UTC] Database connection established
+[24-Sep-2025 14:52:25 UTC] Database insertion successful
+[24-Sep-2025 14:52:25 UTC] Session data set, redirecting to results.php
+[24-Sep-2025 15:32:27 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:32:27 UTC] PHP Stack trace:
+[24-Sep-2025 15:32:27 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:32:27 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:32:27 UTC] PHP Stack trace:
+[24-Sep-2025 15:32:27 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:32:27 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:32:27 UTC] PHP Stack trace:
+[24-Sep-2025 15:32:27 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:32:27 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:32:27 UTC] PHP Stack trace:
+[24-Sep-2025 15:32:27 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:32:27 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:32:27 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 163
+[24-Sep-2025 15:32:27 UTC] PHP Stack trace:
+[24-Sep-2025 15:32:27 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:14 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:33:14 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:14 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:14 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:33:14 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:14 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:14 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:33:14 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:14 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:14 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:33:14 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:14 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:14 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:33:14 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 163
+[24-Sep-2025 15:33:14 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:14 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:53 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:33:53 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:53 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:53 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:33:53 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:53 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:53 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:33:53 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:53 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:53 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:33:53 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:53 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:33:53 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:33:53 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 163
+[24-Sep-2025 15:33:53 UTC] PHP Stack trace:
+[24-Sep-2025 15:33:53 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:02 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:34:02 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:02 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:02 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:34:02 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:02 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:02 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:02 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:02 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:02 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:02 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:02 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:02 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:34:18 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:34:18 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:18 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:18 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:34:18 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:18 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:18 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:18 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:18 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:18 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:18 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:18 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:18 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:45 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:45 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:45 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:34:46 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:34:46 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:46 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:46 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:34:46 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:46 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:46 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:46 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:46 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:46 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:34:46 UTC] PHP Stack trace:
+[24-Sep-2025 15:34:46 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:34:46 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:35:02 UTC] POST request received
+[24-Sep-2025 15:35:02 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[24-Sep-2025 15:35:02 UTC] Validation passed, performing calculations
+[24-Sep-2025 15:35:02 UTC] Database connection established
+[24-Sep-2025 15:35:02 UTC] Database insertion successful
+[24-Sep-2025 15:35:02 UTC] Session data set, redirecting to results.php
+[24-Sep-2025 15:35:05 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:35:05 UTC] PHP Stack trace:
+[24-Sep-2025 15:35:05 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:35:05 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:35:05 UTC] PHP Stack trace:
+[24-Sep-2025 15:35:05 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:35:05 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:35:05 UTC] PHP Stack trace:
+[24-Sep-2025 15:35:05 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:35:05 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:35:05 UTC] PHP Stack trace:
+[24-Sep-2025 15:35:05 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:35:05 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[24-Sep-2025 15:39:09 UTC] POST request received
+[24-Sep-2025 15:39:09 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[24-Sep-2025 15:39:09 UTC] Validation passed, performing calculations
+[24-Sep-2025 15:39:09 UTC] Database connection established
+[24-Sep-2025 15:39:09 UTC] Database insertion successful
+[24-Sep-2025 15:39:09 UTC] Session data set, redirecting to results.php
+[24-Sep-2025 15:39:15 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 104
+[24-Sep-2025 15:39:15 UTC] PHP Stack trace:
+[24-Sep-2025 15:39:15 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:39:15 UTC] PHP Warning:  Undefined array key "extension_ratio" in C:\wamp64\www\Telecom-Calculator\results.php on line 127
+[24-Sep-2025 15:39:15 UTC] PHP Stack trace:
+[24-Sep-2025 15:39:15 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:39:15 UTC] PHP Warning:  Undefined array key "s1_throughput" in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:39:15 UTC] PHP Stack trace:
+[24-Sep-2025 15:39:15 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:39:15 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\wamp64\www\Telecom-Calculator\results.php on line 148
+[24-Sep-2025 15:39:15 UTC] PHP Stack trace:
+[24-Sep-2025 15:39:15 UTC] PHP   1. {main}() C:\wamp64\www\Telecom-Calculator\results.php:0
+[24-Sep-2025 15:39:15 UTC] PHP   2. number_format($num = NULL, $decimals = 2) C:\wamp64\www\Telecom-Calculator\results.php:148
+[30-Sep-2025 10:00:07 UTC] POST request received
+[30-Sep-2025 10:00:07 UTC] Input values: frequency=2100, bandwidth=15, extension_ratio=1.16
+[30-Sep-2025 10:00:07 UTC] Validation passed, performing calculations
+[30-Sep-2025 10:00:07 UTC] Database connection established
+[30-Sep-2025 10:00:07 UTC] Database insertion successful
+[30-Sep-2025 10:00:07 UTC] Session data set, redirecting to results.php
+[30-Sep-2025 10:04:46 UTC] POST request received
+[30-Sep-2025 10:04:46 UTC] Input values: frequency=2100, bandwidth=15, extension_ratio=1.16
+[30-Sep-2025 10:04:46 UTC] Validation passed, performing calculations
+[30-Sep-2025 10:04:46 UTC] Database connection established
+[30-Sep-2025 10:04:46 UTC] Database insertion successful
+[30-Sep-2025 10:04:46 UTC] Session data set, redirecting to results.php
+[03-Oct-2025 14:14:11 UTC] POST request received
+[03-Oct-2025 14:14:11 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[03-Oct-2025 14:14:11 UTC] Validation passed, performing calculations
+[03-Oct-2025 14:14:11 UTC] Database connection established
+[03-Oct-2025 14:14:11 UTC] Database insertion successful
+[03-Oct-2025 14:14:11 UTC] Session data set, redirecting to results.php
+[03-Oct-2025 14:21:15 UTC] POST request received
+[03-Oct-2025 14:21:15 UTC] Input values: frequency=1800, bandwidth=10, extension_ratio=1.16
+[03-Oct-2025 14:21:15 UTC] Validation passed, performing calculations
+[03-Oct-2025 14:21:15 UTC] Database connection established
+[03-Oct-2025 14:21:15 UTC] Database insertion successful
+[03-Oct-2025 14:21:15 UTC] Session data set, redirecting to results.php

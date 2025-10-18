@@ -46,3 +46,30 @@ INSERT INTO bandwidth_config (bandwidth_mhz, mac_throughput_mbps) VALUES
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_calculations_user_id ON calculations_4g(user_id);
 CREATE INDEX idx_calculations_date ON calculations_4g(calculation_date);
+
+-- Structure de la table `stations`
+CREATE TABLE `stations` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(255) NOT NULL,
+  `capacite_totale_cartes` FLOAT NOT NULL COMMENT 'Capacité totale des cartes d''accès en Gbps',
+  `capacite_utilisee_cartes` FLOAT NOT NULL DEFAULT 0 COMMENT 'Capacité utilisée sur les cartes en Gbps',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nom_unique` (`nom`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Structure de la table `liens_wdm`
+CREATE TABLE `liens_wdm` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `station_depart_id` INT(11) NOT NULL,
+  `station_arrivee_id` INT(11) NOT NULL,
+  `capacite_totale` FLOAT NOT NULL COMMENT 'Capacité totale du lien en Gbps',
+  `capacite_utilisee` FLOAT NOT NULL DEFAULT 0 COMMENT 'Capacité utilisée sur le lien en Gbps',
+  PRIMARY KEY (`id`),
+  KEY `station_depart_id` (`station_depart_id`),
+  KEY `station_arrivee_id` (`station_arrivee_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Contraintes pour la table `liens_wdm`
+ALTER TABLE `liens_wdm`
+  ADD CONSTRAINT `fk_station_arrivee` FOREIGN KEY (`station_arrivee_id`) REFERENCES `stations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_station_depart` FOREIGN KEY (`station_depart_id`) REFERENCES `stations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

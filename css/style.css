@@ -44,7 +44,7 @@ body {
 
 /* Ajouter le fond d'image pour le dashboard */
 .dashboard-container {
-    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('../images/background.jpg');
+    /* background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('../images/background.jpg'); */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -55,6 +55,11 @@ body {
     background-image: url('../images/telecom.jpg');
     background-size: cover;
     opacity: 0.1;
+
+}
+
+.flex-column {
+   grid-column: 1 / -1;
 }
 
 .dashboard-container::before {
