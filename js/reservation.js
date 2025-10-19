@@ -1,417 +1,334 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const stationsTableBody = document.getElementById('stations-table-body');
-    const liensTableBody = document.getElementById('liens-table-body');
-    const sourceSelect = document.getElementById('source_station');
-    const destinationSelect = document.getElementById('destination_station');
-    const bookingForm = document.getElementById('booking-form');
-    const resultZone = document.getElementById('result-zone');
-    const refreshBtn = document.getElementById('refresh-btn');
+//reservation.js
 
-    const zoomInBtn = document.getElementById('zoom-in-btn');
-    const zoomOutBtn = document.getElementById('zoom-out-btn');
-    const fitBtn = document.getElementById('fit-btn');
-    
-    let network = null;
+document.addEventListener('DOMContentLoaded', () => {
+  // éléments UI
+  const stationsTableBody = document.getElementById('stations-table-body');
+  const liensTableBody = document.getElementById('liens-table-body');
+  const bookingForm = document.getElementById('booking-form');
+  const resultZone = document.getElementById('result-zone');
+  const refreshBtn = document.getElementById('refresh-btn');
+  const zoomInBtn = document.getElementById('zoom-in-btn');
+  const zoomOutBtn = document.getElementById('zoom-out-btn');
+  const fitBtn = document.getElementById('fit-btn');
 
-    // The custom color palette has been removed.
+  // Get select elements - using direct references
+  const sourceSelect = document.getElementById('source_station');
+  const destinationSelect = document.getElementById('destination_station');
+  const throughputInput = document.getElementById('throughput');
 
-    function createCapacityBar(used, total) {
-        if (total === 0) return '<div class="capacity-bar"><div class="low" style="width: 100%;">N/A</div></div>';
-        const percentageUsed = (used / total) * 100;
-        let colorClass = 'high';
-        if (percentageUsed >= 80) colorClass = 'low';
-        else if (percentageUsed >= 50) colorClass = 'medium';
+  // vis.js network
+  let network = null;
+  const nodesDS = new vis.DataSet();
+  const edgesDS = new vis.DataSet();
+  const edgesIndex = new Map(); // "from_to" -> [edgeId,...]
 
-        return `
-            <div class="capacity-bar" title="${percentageUsed.toFixed(1)}% Utilisé">
-                <div class="${colorClass}" style="width: ${percentageUsed.toFixed(2)}%;">
-                    ${percentageUsed.toFixed(0)}%
-                </div>
-            </div>
-        `;
+  // Helper: safe HTML escape
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function createCapacityBar(used, total) {
+    used = Number(used || 0);
+    total = Number(total || 0);
+    if (!total) {
+      return '<div class="capacity-bar"><div class="low" style="width: 100%;">N/A</div></div>';
     }
+    const percentageUsed = (used / total) * 100;
+    let colorClass = 'high';
+    if (percentageUsed >= 80) colorClass = 'low';
+    else if (percentageUsed >= 50) colorClass = 'medium';
+    return `<div class="capacity-bar" title="${percentageUsed.toFixed(1)}% Utilisé"><div class="${colorClass}" style="width: ${percentageUsed.toFixed(2)}%;">${percentageUsed.toFixed(0)}%</div></div>`;
+  }
 
-    // ===================================================================
-    // FONCTION MISE À JOUR : Dessiner le diagramme avec couleurs de nœuds uniformes
-    // ===================================================================
-
-    // assume `network` is a global variable
-function drawNetworkDiagram(stations, liens) {
-    // CSS: ensure container has explicit height
-    // #network-diagram { width: 100%; height: 600px; }
-
-    // Build node+edge arrays (no x/y so physics can compute positions)
+  // Build nodes & edges with fallbacks for missing names.
+  function buildNodesEdges(stations = [], liens = []) {
+    edgesIndex.clear();
     const nodesArray = stations.map(station => {
-        const available = station.capacite_totale_cartes - station.capacite_utilisee_cartes;
-        return {
-            id: station.id,
-            label: station.nom,
-            // no explicit x/y so vis can compute layout
-            size: 20, // target size (will animate from smaller)
-            color: {
-                background: '#D2E5FF',
-                border: '#2B7CE9',
-                highlight: { background: '#D2E5FF', border: '#2B7CE9' }
-            },
-            title: `${station.nom}\nCapacité Cartes Dispo: ${available.toFixed(2)} Gbps`
-        };
+      const id = station.id ?? station.station_id ?? station._id ?? '';
+      const name = (station.nom ?? station.name ?? station.label ?? `Station ${id}`) || `Station ${id}`;
+      const available = Number(station.capacite_totale_cartes || 0) - Number(station.capacite_utilisee_cartes || 0);
+      return {
+        id: String(id),
+        label: String(name),
+        size: 20,
+        color: { background: '#D2E5FF', border: '#2B7CE9' },
+        title: `<div style="text-align:left;"><b>${escapeHtml(name)}</b><br>Capacité Cartes Dispo: <b>${available.toFixed(2)} Gbps</b></div>`
+      };
     });
 
     const edgesArray = liens.map(lien => {
-        const used = lien.capacite_utilisee;
-        const total = lien.capacite_totale;
-        const available = total - used;
-        const percentageUsed = total > 0 ? (used / total) * 100 : 0;
-
-        let color = '#28a745';
-        if (percentageUsed >= 80) color = '#dc3545';
-        else if (percentageUsed >= 50) color = '#ffc107';
-
-        const finalWidth = 3 + (percentageUsed / 20);
-        return {
-            id: lien.id, // ensure unique id
-            from: lien.station_depart_id,
-            to: lien.station_arrivee_id,
-            label: `${available.toFixed(0)}G Dispo`,
-            font: { background: 'white', size: 12, strokeWidth: 0 },
-            title: `Lien: ${lien.nom_depart} ➔ ${lien.nom_arrivee}\nUtilisé: ${used.toFixed(2)} / ${total} Gbps\nDisponible: ${available.toFixed(2)} Gbps`,
-            color: { color: color, highlight: '#007bff', hover: '#007bff' },
-            width: finalWidth, // target width (we'll animate from 0)
-            _finalWidth: finalWidth // keep target for animation
-        };
+      const id = lien.id ?? lien.link_id ?? '';
+      const from = String(lien.station_depart_id ?? lien.from_id ?? '');
+      const to = String(lien.station_arrivee_id ?? lien.to_id ?? '');
+      const used = Number(lien.capacite_utilisee || 0);
+      const total = Number(lien.capacite_totale || 0);
+      const available = total - used;
+      const percentageUsed = total > 0 ? (used / total) * 100 : 0;
+      let color = '#28a745';
+      if (percentageUsed >= 80) color = '#dc3545';
+      else if (percentageUsed >= 50) color = '#ffc107';
+      const finalWidth = 3 + (percentageUsed / 20);
+      const edgeObj = {
+        id: String(id),
+        from,
+        to,
+        label: `${available.toFixed(0)}G Dispo`,
+        font: { background: 'white', size: 12, strokeWidth: 0 },
+        title: `<div style="text-align:left;">Lien: ${escapeHtml(lien.nom_depart ?? lien.from_name ?? '')} ➔ ${escapeHtml(lien.nom_arrivee ?? lien.to_name ?? '')}<br>Utilisé: ${used.toFixed(2)} / ${total} Gbps<br><b>Disponible: ${available.toFixed(2)} Gbps</b></div>`,
+        color: { color, highlight: '#007bff', hover: '#007bff' },
+        width: finalWidth,
+        _finalWidth: finalWidth
+      };
+      const key = `${edgeObj.from}_${edgeObj.to}`;
+      if (!edgesIndex.has(key)) edgesIndex.set(key, []);
+      edgesIndex.get(key).push(edgeObj.id);
+      return edgeObj;
     });
 
-    const container = document.getElementById('network-diagram');
+    return { nodesArray, edgesArray };
+  }
 
-    // Use DataSet so we can update during animation
-    const nodesDS = new vis.DataSet(nodesArray);
-    const edgesDS = new vis.DataSet(edgesArray);
+  // Draw or update network
+  function drawNetworkDiagram(stations, liens) {
+    const { nodesArray, edgesArray } = buildNodesEdges(stations, liens);
 
-    const data = { nodes: nodesDS, edges: edgesDS };
+    nodesDS.clear();
+    edgesDS.clear();
+    if (nodesArray.length) nodesDS.add(nodesArray);
+    if (edgesArray.length) edgesDS.add(edgesArray);
 
-    const options = {
-        nodes: {
-            shape: 'dot',
-            size: 20,
-            font: { size: 14, color: '#333', face: 'Arial' },
-            borderWidth: 2,
-            shadow: true
-        },
-        edges: {
-            shadow: false,
-            smooth: { type: 'continuous', roundness: 0.2 }
-        },
-        physics: {
-            stabilization: {
-                enabled: true,
-                iterations: 500,
-                updateInterval: 25
-            },
-            barnesHut: {
-                gravitationalConstant: -8000,
-                springConstant: 0.04,
-                springLength: 200
-            }
-        },
-        interaction: {
-            hover: true,
-            tooltipDelay: 100,
-            zoomView: true
-        }
-    };
-
-    // helper: perform fit safely
-    const applyFit = () => {
-        requestAnimationFrame(() => {
-            try {
-                network.redraw && network.redraw();
-                network.fit && network.fit();
-            } catch (e) { /* ignore */ }
-        });
-    };
-
-    // Animation routine: called after stabilization to animate from collapsed -> layout
-    const animateLoad = (duration = 1200) => {
-        // collect final positions (already computed by stabilization)
-        const finalPositions = network.getPositions(); // { id: {x, y}, ... }
-        const nodeIds = Object.keys(finalPositions);
-        if (nodeIds.length === 0) return;
-
-        // compute centroid of final layout
-        let cx = 0, cy = 0;
-        nodeIds.forEach(id => {
-            cx += finalPositions[id].x;
-            cy += finalPositions[id].y;
-        });
-        cx /= nodeIds.length;
-        cy /= nodeIds.length;
-
-        // Store targets and initial states
-        const targets = {};
-        nodeIds.forEach(id => {
-            const node = nodesDS.get(id);
-            targets[id] = {
-                x: finalPositions[id].x,
-                y: finalPositions[id].y,
-                size: (node && node.size) ? node.size : (options.nodes.size || 20)
-            };
-        });
-
-        // Disable physics so we control nodes positions during animation
-        network.setOptions({ physics: false });
-
-        // Collapse nodes to centroid and set them small and fixed
-        const COLLAPSED_SIZE = 6;
-        nodeIds.forEach(id => {
-            nodesDS.update({ id: id, x: cx, y: cy, size: COLLAPSED_SIZE, fixed: { x: true, y: true } });
-        });
-        // collapse edges visually to width 0
-        edgesDS.forEach(edge => {
-            edgesDS.update({ id: edge.id, width: 0 });
-        });
-
-        // allow a short repaint
-        setTimeout(() => {
-            const start = performance.now();
-            const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
-
-            function step(now) {
-                const tRaw = Math.min(1, (now - start) / duration);
-                const t = easeOutCubic(tRaw);
-
-                // move each node
-                nodeIds.forEach(id => {
-                    const target = targets[id];
-                    const x = cx + (target.x - cx) * t;
-                    const y = cy + (target.y - cy) * t;
-                    network.moveNode(id, x, y); // moves node position
-                    // animate size
-                    const size = COLLAPSED_SIZE + (target.size - COLLAPSED_SIZE) * t;
-                    nodesDS.update({ id: id, size: size });
-                });
-
-                // animate edges width
-                edgesDS.forEach(edge => {
-                    const finalW = edge._finalWidth || edge.width || 3;
-                    const w = finalW * t;
-                    edgesDS.update({ id: edge.id, width: w });
-                });
-
-                if (tRaw < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    // finalize: set exact target positions/sizes and unfix nodes
-                    nodeIds.forEach(id => {
-                        nodesDS.update({ id: id, x: targets[id].x, y: targets[id].y, size: targets[id].size, fixed: { x: false, y: false } });
-                    });
-                    edgesDS.forEach(edge => {
-                        edgesDS.update({ id: edge.id, width: edge._finalWidth || edge.width || 3 });
-                    });
-                    applyFit(); // ensure viewport fits final layout
-                }
-            }
-
-            requestAnimationFrame(step);
-        }, 20);
-    };
-
-    if (network) {
-        // if already instantiated, update data and animate
-        network.setData(data);
-        // small delay to ensure the network updates, then stabilize & animate
-        // Use stabilization flow to get final positions: run a short stabilization cycle
-        network.once('stabilizationIterationsDone', () => {
-            setTimeout(() => animateLoad(), 30);
-        });
-        // re-enable stabilization briefly to let it compute positions for animation
-        network.setOptions({
-            physics: {
-                stabilization: { enabled: true, iterations: 200, updateInterval: 25 },
-                barnesHut: options.physics.barnesHut
-            }
-        });
-    } else {
-        // first initialization
-        network = new vis.Network(container, data, options);
-
-        // once network computed layout, animate
-        network.once('stabilizationIterationsDone', function () {
-            // small timeout to ensure positions are available
-            setTimeout(() => {
-                animateLoad(1200); // 1200ms animation
-            }, 30);
-        });
-
-        // also try after first drawing as fallback
-        network.once('afterDrawing', () => {
-            setTimeout(() => {
-                applyFit();
-            }, 0);
-        });
+    if (!network) {
+      const container = document.getElementById('network-diagram');
+      const data = { nodes: nodesDS, edges: edgesDS };
+      const options = {
+        edges: { smooth: { type: 'dynamic' } },
+        physics: { barnesHut: { gravitationalConstant: -15000, springLength: 250, springConstant: 0.05 } },
+        interaction: { hover: true, tooltipDelay: 100 }
+      };
+      network = new vis.Network(container, data, options);
+      network.once('afterDrawing', () => network.fit({ animation: { duration: 600 } }));
     }
+  }
 
-    // Re-fit on window resize (debounced)
-    window.addEventListener('resize', () => {
-        clearTimeout(window._visFitTimeout);
-        window._visFitTimeout = setTimeout(() => {
-            try { network.fit(); } catch (e) {}
-        }, 120);
-    });
-}
+  // Highlight path using edgesIndex for O(1) edge lookup
+  function highlightPath(path_ids = []) {
+    // reset nodes
+    const allNodeIds = nodesDS.getIds();
+    const nodeUpdates = allNodeIds.map(id => ({ id, color: { border: '#2B7CE9' }, borderWidth: 2 }));
+    if (nodeUpdates.length) nodesDS.update(nodeUpdates);
 
+    // reset edges widths
+    const allEdges = edgesDS.get();
+    const edgeUpdates = allEdges.map(e => ({ id: e.id, width: e._finalWidth || 3 }));
+    if (edgeUpdates.length) edgesDS.update(edgeUpdates);
 
-    // Le reste du fichier (fetchNetworkState, etc.) reste identique à la version précédente.
-    async function fetchNetworkState() {
-        try {
-            const response = await fetch('api.php?action=get_network_state');
-            const data = await response.json();
+    if (!path_ids || path_ids.length === 0) return;
 
-            if (data.status === 'success') {
-                // Mettre à jour le tableau des stations
-                stationsTableBody.innerHTML = '';
-                data.stations.forEach(station => {
-                    const row = `
-                        <tr>
-                            <td><strong>${station.nom}</strong></td>
-                            <td>${parseFloat(station.capacite_disponible_cartes).toFixed(2)}</td>
-                            <td>${createCapacityBar(station.capacite_utilisee_cartes, station.capacite_totale_cartes)}</td>
-                        </tr>
-                    `;
-                    stationsTableBody.innerHTML += row;
-                });
+    // highlight nodes
+    const pathNodeUpdates = path_ids.map(id => ({ id: String(id), color: { border: '#e67e22' }, borderWidth: 4 }));
+    nodesDS.update(pathNodeUpdates);
 
-                // Mettre à jour le tableau des liens
-                liensTableBody.innerHTML = '';
-                data.liens.forEach(lien => {
-                    const row = `
-                        <tr>
-                            <td>${lien.nom_depart} <i class="fas fa-long-arrow-alt-right"></i> ${lien.nom_arrivee}</td>
-                            <td>${parseFloat(lien.capacite_disponible).toFixed(2)}</td>
-                            <td>${createCapacityBar(lien.capacite_utilisee, lien.capacite_totale)}</td>
-                        </tr>
-                    `;
-                    liensTableBody.innerHTML += row;
-                });
-
-                // Dessiner le diagramme
-                drawNetworkDiagram(data.stations, data.liens);
-                
-                updateStationSelects(data.stations);
-            } else {
-                showResult(data.message, 'error');
-            }
-        } catch (error) {
-            console.error(error);
-            showResult('Erreur de connexion au serveur.', 'error');
-        }
+    // highlight edges
+    const pathEdgeUpdates = [];
+    for (let i = 0; i < path_ids.length - 1; i++) {
+      const key = `${String(path_ids[i])}_${String(path_ids[i + 1])}`;
+      const ids = edgesIndex.get(key);
+      if (ids && ids.length) ids.forEach(eid => pathEdgeUpdates.push({ id: eid, width: 8 }));
     }
+    if (pathEdgeUpdates.length) edgesDS.update(pathEdgeUpdates);
+  }
 
-    function updateStationSelects(stations) {
-        const selectedSource = sourceSelect.value;
-        const selectedDest = destinationSelect.value;
-        
-        sourceSelect.innerHTML = '<option value="">-- Choisir une station --</option>';
-        destinationSelect.innerHTML = '<option value="">-- Choisir une station --</option>';
+  // Render tables and select options. Defensive for missing fields.
+  function renderTablesAndSelects(stations = [], liens = []) {
+    if (!Array.isArray(stations)) stations = [];
+    if (!Array.isArray(liens)) liens = [];
 
-        stations.forEach(station => {
-            sourceSelect.innerHTML += `<option value="${station.id}">${station.nom}</option>`;
-            destinationSelect.innerHTML += `<option value="${station.id}">${station.nom}</option>`;
-        });
-        
-        sourceSelect.value = selectedSource;
-        destinationSelect.value = selectedDest;
+    // Build table markup
+    const sRows = stations.map(station => {
+      const id = station.id ?? station.station_id ?? '';
+      const name = station.nom ?? station.name ?? station.label ?? `Station ${id}`;
+      const available = Number(station.capacite_totale_cartes || 0) - Number(station.capacite_utilisee_cartes || 0);
+      return `<tr>
+        <td><strong>${escapeHtml(name)}</strong></td>
+        <td>${available.toFixed(2)}</td>
+        <td>${createCapacityBar(Number(station.capacite_utilisee_cartes || 0), Number(station.capacite_totale_cartes || 0))}</td>
+      </tr>`;
+    }).join('');
+
+    const lRows = liens.map(lien => {
+      const nomDepart = lien.nom_depart ?? lien.from_name ?? '';
+      const nomArrivee = lien.nom_arrivee ?? lien.to_name ?? '';
+      const available = Number(lien.capacite_totale || 0) - Number(lien.capacite_utilisee || 0);
+      return `<tr>
+        <td>${escapeHtml(nomDepart)} <i class="fas fa-long-arrow-alt-right"></i> ${escapeHtml(nomArrivee)}</td>
+        <td>${available.toFixed(2)}</td>
+        <td>${createCapacityBar(Number(lien.capacite_utilisee || 0), Number(lien.capacite_totale || 0))}</td>
+      </tr>`;
+    }).join('');
+
+    // Preserve selected values
+    const prevSrc = sourceSelect ? sourceSelect.value : '';
+    const prevDst = destinationSelect ? destinationSelect.value : '';
+
+    // Build options HTML
+    const optionsHtml = stations.map(station => {
+      const id = String(station.id ?? station.station_id ?? '');
+      const name = station.nom ?? station.name ?? station.label ?? `Station ${id}`;
+      return `<option value="${escapeHtml(id)}">${escapeHtml(name)}</option>`;
+    }).join('');
+
+    const fullOptions = '<option value="">-- Choisir une station --</option>' + optionsHtml;
+
+    // Update DOM
+    if (stationsTableBody) stationsTableBody.innerHTML = sRows;
+    if (liensTableBody) liensTableBody.innerHTML = lRows;
+    
+    if (sourceSelect) {
+      sourceSelect.innerHTML = fullOptions;
+      // Restore previous selection if it still exists
+      if (prevSrc && Array.from(sourceSelect.options).some(o => o.value === prevSrc)) {
+        sourceSelect.value = prevSrc;
+      }
     }
     
-    function showResult(message, type) {
-        resultZone.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${message}`;
-        resultZone.className = `result-zone ${type}`;
-        resultZone.style.display = 'block';
+    if (destinationSelect) {
+      destinationSelect.innerHTML = fullOptions;
+      // Restore previous selection if it still exists
+      if (prevDst && Array.from(destinationSelect.options).some(o => o.value === prevDst)) {
+        destinationSelect.value = prevDst;
+      }
     }
+  }
 
-    bookingForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(bookingForm);
-        const data = {
-            source: formData.get('source'),
-            destination: formData.get('destination'),
-            throughput: formData.get('throughput')
-        };
-        
-        if (!data.source || !data.destination || !data.throughput) {
-            showResult('Veuillez remplir tous les champs.', 'error');
-            return;
-        }
-        if (data.source === data.destination) {
-            showResult('La station de départ et d\'arrivée doivent être différentes.', 'error');
-            return;
-        }
+  // show result in UI
+  function showResult(message, type = 'info', path_names = []) {
+    let html = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${escapeHtml(message)}`;
+    if (type === 'success' && Array.isArray(path_names) && path_names.length) {
+      html += `<br><small>Meilleur chemin : <strong>${path_names.map(escapeHtml).join(' → ')}</strong></small>`;
+    }
+    resultZone.innerHTML = html;
+    resultZone.className = `result-zone ${type}`;
+    resultZone.style.display = 'block';
+  }
 
-        try {
-                const response = await fetch('api.php?action=reserve_capacity', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+  // fetch network state with verbose logging (for debugging)
+  let currentFetchController = null;
+  async function fetchNetworkState() {
+    // cancel previous if any
+    if (currentFetchController) currentFetchController.abort();
+    currentFetchController = new AbortController();
+    const signal = currentFetchController.signal;
 
-                const result = await response.json();
-                showResult(result.message, result.status);
+    try {
+      console.log('fetchNetworkState: fetching api.php?action=get_network_state');
+      const res = await fetch('api.php?action=get_network_state', { signal });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        console.warn('fetchNetworkState: HTTP error', res.status, txt);
+        showResult('Erreur serveur lors de la récupération.', 'error');
+        return;
+      }
+      const data = await res.json().catch(async e => {
+        const raw = await res.text().catch(() => '');
+        console.error('fetchNetworkState: JSON parse failed. Raw response:', raw);
+        throw e;
+      });
 
-                if (result.status === 'success') {
-                    await fetchNetworkState(); 
-                    
-                    // ===================================================================
-                    // MISE À JOUR : FOCUS SUR LE CHEMIN ENTIER
-                    // ===================================================================
-                    if (network && result.path_ids && result.path_ids.length > 0) {
-                        network.fit({
-                            nodes: result.path_ids, // Utiliser le tableau d'IDs du chemin
-                            animation: {
-                                duration: 1200,
-                                easingFunction: 'easeInOutQuad'
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                showResult('Erreur lors de la soumission de la réservation.', 'error');
-            }
-        });
+      console.log('fetchNetworkState response:', data);
+
+      if (data && data.status === 'success' && Array.isArray(data.stations) && Array.isArray(data.liens)) {
+        // defensive normalization: ensure station ids are strings
+        data.stations = data.stations.map(s => ({ ...s, id: String(s.id ?? s.station_id ?? '') }));
+        data.liens = data.liens.map(l => ({ ...l, id: String(l.id ?? l.link_id ?? '') , station_depart_id: String(l.station_depart_id ?? l.from_id ?? ''), station_arrivee_id: String(l.station_arrivee_id ?? l.to_id ?? '') }));
+
+        renderTablesAndSelects(data.stations, data.liens);
+        drawNetworkDiagram(data.stations, data.liens);
+      } else {
+        console.warn('fetchNetworkState: unexpected payload', data);
+        showResult((data && data.message) ? data.message : 'Format de réponse inattendu', 'error');
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        console.log('fetchNetworkState: aborted (new fetch started).');
+        return;
+      }
+      console.error('fetchNetworkState error:', err);
+      showResult('Erreur de connexion au serveur.', 'error');
+    } finally {
+      currentFetchController = null;
+    }
+  }
+
+  // Booking form handling
+  let bookingInProgress = false;
+  bookingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (bookingInProgress) return;
     
-    refreshBtn.addEventListener('click', () => {
-        resultZone.style.display = 'none';
-        resultZone.textContent = '';
-        bookingForm.reset();
-        fetchNetworkState();
-    });
+    const data = {
+      source: sourceSelect ? String(sourceSelect.value) : '',
+      destination: destinationSelect ? String(destinationSelect.value) : '',
+      throughput: throughputInput ? String(throughputInput.value) : ''
+    };
+    
+    if (!data.source || !data.destination || !data.throughput) {
+      showResult('Veuillez remplir tous les champs.', 'error');
+      return;
+    }
+    if (data.source === data.destination) {
+      showResult('La station de départ et d\'arrivée doivent être différentes.', 'error');
+      return;
+    }
+    
+    bookingInProgress = true;
+    const submitBtn = bookingForm.querySelector('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    
+    try {
+      const res = await fetch('api.php?action=reserve_capacity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      console.log('reserve_capacity response:', result);
+      showResult(result.message || 'Réponse inconnue', result.status || 'info', result.path_names || []);
+      if (result.status === 'success') {
+        await fetchNetworkState();
+        if (result.path_ids) highlightPath(result.path_ids.map(String));
+      }
+    } catch (err) {
+      console.error('reserve_capacity error:', err);
+      showResult('Erreur lors de la soumission de la réservation.', 'error');
+    } finally {
+      bookingInProgress = false;
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
 
-    zoomInBtn.addEventListener('click', () => {
-        if (network) {
-            const currentScale = network.getScale();
-            network.moveTo({
-                scale: currentScale * 1.3, // Zoom avant de 30%
-                animation: { duration: 300, easingFunction: 'easeOutQuad' }
-            });
-        }
-    });
-
-    zoomOutBtn.addEventListener('click', () => {
-        if (network) {
-            const currentScale = network.getScale();
-            network.moveTo({
-                scale: currentScale / 1.3, // Zoom arrière de 30%
-                animation: { duration: 300, easingFunction: 'easeOutQuad' }
-            });
-        }
-    });
-
-    fitBtn.addEventListener('click', () => {
-        if (network) {
-            // C'est la même fonction que celle utilisée au chargement.
-            network.fit({
-                animation: { duration: 800, easingFunction: 'easeInOutQuad' }
-            });
-        }
-    });
-
+  // Refresh button
+  let refreshLocked = false;
+  refreshBtn.addEventListener('click', () => {
+    if (refreshLocked) return;
+    refreshLocked = true;
+    resultZone.style.display = 'none';
+    bookingForm.reset();
+    highlightPath([]);
     fetchNetworkState();
-});
+    setTimeout(() => (refreshLocked = false), 800);
+  });
+
+  // Zoom controls
+  zoomInBtn.addEventListener('click', () => network && network.moveTo({ scale: network.getScale() * 1.3 }));
+  zoomOutBtn.addEventListener('click', () => network && network.moveTo({ scale: network.getScale() / 1.3 }));
+  fitBtn.addEventListener('click', () => network && network.fit());
+
+  // initial fetch
+  fetchNetworkState();
+}); 

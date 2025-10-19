@@ -1,4 +1,4 @@
-<?php
+<?php //reservation.php
 require_once 'config.php';
 requireLogin();
 
