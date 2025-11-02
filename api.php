@@ -55,7 +55,7 @@ try {
     } 
     
     // ===================================================================
-    // ACTION: TENTER UNE RÉSERVATION DE CAPACITÉ MULTI-SAUTS
+    // ACTION: TENTER UNE RÉSERVATION DE CAPACITÉ AVEC CHEMINS DE SECOURS
     // ===================================================================
     elseif ($action === 'reserve_capacity' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
@@ -64,10 +64,7 @@ try {
         $arrivee_id = intval($data['destination']);
         $debit_gbps = floatval($data['throughput']) / 1000;
 
-        // Démarrer une transaction pour garantir que toutes les mises à jour réussissent ou échouent ensemble.
-        $pdo->beginTransaction();
-
-        // Étape 1: Vérifier la capacité de la carte de la station de départ. C'est le premier point de contrôle.
+        // Étape 1: Vérification de la carte de départ (inchangée)
         $stmt_station_depart = $pdo->prepare("SELECT nom, (capacite_totale_cartes - capacite_utilisee_cartes) as dispo_cartes FROM stations WHERE id = ?");
         $stmt_station_depart->execute([$depart_id]);
         $station_depart = $stmt_station_depart->fetch(PDO::FETCH_ASSOC);
@@ -76,88 +73,76 @@ try {
             throw new Exception("Échec : Capacité insuffisante sur les cartes d'accès de la station '" . ($station_depart['nom'] ?? 'Inconnue') . "'.");
         }
 
-        // Étape 2: Construire un graphe du réseau et trouver le chemin optimal (le moins congestionné) avec Dijkstra.
-        $liens_stmt = $pdo->query("SELECT id, station_depart_id, station_arrivee_id, capacite_totale, capacite_utilisee FROM liens_wdm");
-        $all_liens = $liens_stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Étape 2: Trouver jusqu'à 3 chemins valides (principal + 2 secours)
+        $all_valid_paths = [];
+        $temp_graph_liens = $pdo->query("SELECT id, station_depart_id, station_arrivee_id, capacite_totale, capacite_utilisee FROM liens_wdm")->fetchAll(PDO::FETCH_ASSOC);
+
+        for ($k = 0; $k < 3; $k++) { // Chercher jusqu'à 3 chemins
+            $graph = build_graph_from_liens($temp_graph_liens, $debit_gbps);
+            $path_nodes = find_shortest_path($graph, $depart_id, $arrivee_id);
+
+            if (empty($path_nodes)) {
+                break; // Aucun autre chemin trouvé, on arrête la recherche
+            }
+
+            // Vérifier si ce chemin est réellement viable
+            $path_verification_result = verify_path_capacity($path_nodes, $debit_gbps, $pdo);
+            if ($path_verification_result['is_valid']) {
+                $all_valid_paths[] = [
+                    'nodes' => $path_nodes,
+                    'names' => $path_verification_result['names'],
+                    'liens_to_update' => $path_verification_result['liens']
+                ];
+
+                // "Supprimer" les liens du chemin trouvé pour la prochaine itération
+                $liens_ids_to_remove = $path_verification_result['liens'];
+                $temp_graph_liens = array_filter($temp_graph_liens, function($lien) use ($liens_ids_to_remove) {
+                    return !in_array($lien['id'], $liens_ids_to_remove);
+                });
+            } else {
+                // Si le chemin trouvé par Dijkstra n'est pas viable (ex: à cause des liens parallèles), on arrête.
+                break;
+            }
+        }
+
+        if (empty($all_valid_paths)) {
+            throw new Exception("Échec : Aucun chemin avec la capacité requise n'a été trouvé.");
+        }
+
+        // Le premier chemin trouvé est le chemin principal
+        $main_path = $all_valid_paths[0];
         
-        $graph = [];
-        foreach ($all_liens as $lien) {
-            // Le "coût" est le taux d'utilisation. Un lien vide a un coût proche de 0, un lien plein a un coût de 1.
-            // On ajoute le débit demandé pour pénaliser les liens qui seraient proches de la saturation.
-            $predicted_usage = $lien['capacite_utilisee'] + $debit_gbps;
-            if ($lien['capacite_totale'] == 0 || $predicted_usage > $lien['capacite_totale']) {
-                continue; // Ignorer les liens qui n'ont pas de capacité ou qui seraient surchargés.
-            }
-            $cost = $predicted_usage / $lien['capacite_totale'];
-            
-            $graph[$lien['station_depart_id']][] = [
-                'to' => $lien['station_arrivee_id'],
-                'weight' => $cost
-            ];
-        }
-
-        $path_nodes = find_shortest_path($graph, $depart_id, $arrivee_id);
-
-        if (empty($path_nodes)) {
-            throw new Exception("Échec : Aucun chemin avec la capacité requise n'a été trouvé entre les stations sélectionnées.");
-        }
-
-        // Étape 3: Le chemin est trouvé. Maintenant, vérifier la capacité sur CHAQUE segment du chemin.
-        $path_liens_to_update = [];
-        $path_names = [$station_depart['nom']];
-
-        for ($i = 0; $i < count($path_nodes) - 1; $i++) {
-            $from_id = $path_nodes[$i];
-            $to_id = $path_nodes[$i + 1];
-
-            // S'il y a des liens parallèles, choisir celui avec le plus de capacité disponible.
-            $lien_stmt = $pdo->prepare(
-                "SELECT id, (capacite_totale - capacite_utilisee) as dispo 
-                 FROM liens_wdm WHERE station_depart_id = ? AND station_arrivee_id = ? 
-                 ORDER BY dispo DESC LIMIT 1"
-            );
-            $lien_stmt->execute([$from_id, $to_id]);
-            $best_link = $lien_stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if (!$best_link || $best_link['dispo'] < $debit_gbps) {
-                // Obtenir les noms pour un message d'erreur clair
-                $from_name_stmt = $pdo->prepare("SELECT nom FROM stations WHERE id=?");
-                $from_name_stmt->execute([$from_id]);
-                $from_name = $from_name_stmt->fetchColumn();
-                
-                $to_name_stmt = $pdo->prepare("SELECT nom FROM stations WHERE id=?");
-                $to_name_stmt->execute([$to_id]);
-                $to_name = $to_name_stmt->fetchColumn();
-
-                throw new Exception("Échec : Capacité insuffisante sur le segment '" . $from_name . " -> " . $to_name . "' du chemin optimal.");
-            }
-            $path_liens_to_update[] = $best_link['id'];
-            $path_names[] = $pdo->query("SELECT nom FROM stations WHERE id=$to_id")->fetchColumn();
-        }
-
-        // Étape 4: Toutes les vérifications ont réussi. Procéder à la réservation.
-        // Mettre à jour la capacité sur tous les liens du chemin.
+        // Étape 3: Procéder à la réservation sur le chemin principal
+        $pdo->beginTransaction();
+        
         $update_lien_stmt = $pdo->prepare("UPDATE liens_wdm SET capacite_utilisee = capacite_utilisee + ? WHERE id = ?");
-        foreach ($path_liens_to_update as $lien_id) {
+        foreach ($main_path['liens_to_update'] as $lien_id) {
             $update_lien_stmt->execute([$debit_gbps, $lien_id]);
         }
-
-        // Mettre à jour la capacité de la carte de la station de départ.
+        
         $update_station_stmt = $pdo->prepare("UPDATE stations SET capacite_utilisee_cartes = capacite_utilisee_cartes + ? WHERE id = ?");
         $update_station_stmt->execute([$debit_gbps, $depart_id]);
-
-        // Valider la transaction pour rendre toutes les modifications permanentes.
+        
         $pdo->commit();
+
+        // Préparer les chemins de secours pour la réponse
+        $backup_paths_names = [];
+        if(count($all_valid_paths) > 1) {
+            for($i = 1; $i < count($all_valid_paths); $i++){
+                $backup_paths_names[] = implode(" -> ", $all_valid_paths[$i]['names']);
+            }
+        }
 
         $response = [
             'status' => 'success',
-            'message' => number_format($debit_gbps * 1000, 2) . " Mbps réservés sur le chemin : " . implode(" -> ", $path_names),
-            'path_ids' => $path_nodes // Renvoyer les IDs des nœuds pour la mise en évidence sur le frontend
+            'message' => number_format($debit_gbps * 1000, 2) . " Mbps réservés.",
+            'path_names' => $main_path['names'],
+            'path_ids' => $main_path['nodes'],
+            'backup_paths' => $backup_paths_names // Ajouter les chemins de secours
         ];
     }
 
 } catch (Exception $e) {
-    // En cas d'erreur à n'importe quelle étape, annuler la transaction.
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
@@ -167,6 +152,51 @@ try {
 // Envoyer la réponse finale au frontend.
 echo json_encode($response);
 
+// ===================================================================
+// FONCTIONS UTILITAIRES
+// ===================================================================
+
+/**
+ * Construit un graphe pondéré à partir d'une liste de liens.
+ */
+function build_graph_from_liens($liens, $debit_gbps) {
+    $graph = [];
+    foreach ($liens as $lien) {
+        $predicted_usage = $lien['capacite_utilisee'] + $debit_gbps;
+        if ($lien['capacite_totale'] == 0 || $predicted_usage > $lien['capacite_totale']) {
+            continue; // Ignorer les liens qui n'ont pas la capacité
+        }
+        $cost = $predicted_usage / $lien['capacite_totale'];
+        $graph[$lien['station_depart_id']][] = ['to' => $lien['station_arrivee_id'], 'weight' => $cost];
+    }
+    return $graph;
+}
+
+/**
+ * Vérifie si un chemin donné a la capacité suffisante sur chaque segment.
+ */
+function verify_path_capacity($path_nodes, $debit_gbps, $pdo) {
+    $path_liens = [];
+    $path_names = [];
+    $start_node_name = $pdo->query("SELECT nom FROM stations WHERE id=" . $path_nodes[0])->fetchColumn();
+    $path_names[] = $start_node_name;
+
+    for ($i = 0; $i < count($path_nodes) - 1; $i++) {
+        $from_id = $path_nodes[$i];
+        $to_id = $path_nodes[$i + 1];
+
+        $lien_stmt = $pdo->prepare("SELECT id FROM liens_wdm WHERE station_depart_id = ? AND station_arrivee_id = ? AND (capacite_totale - capacite_utilisee) >= ? ORDER BY (capacite_totale - capacite_utilisee) DESC LIMIT 1");
+        $lien_stmt->execute([$from_id, $to_id, $debit_gbps]);
+        $best_link = $lien_stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$best_link) {
+            return ['is_valid' => false]; // Segment invalide
+        }
+        $path_liens[] = $best_link['id'];
+        $path_names[] = $pdo->query("SELECT nom FROM stations WHERE id=$to_id")->fetchColumn();
+    }
+    return ['is_valid' => true, 'liens' => $path_liens, 'names' => $path_names];
+}
 
 /**
  * Implémentation de l'algorithme de Dijkstra pour trouver le chemin le moins coûteux.

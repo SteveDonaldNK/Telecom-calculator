@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
         label: String(name),
         size: 20,
         color: { background: '#D2E5FF', border: '#2B7CE9' },
-        title: `<div style="text-align:left;"><b>${escapeHtml(name)}</b><br>Capacité Cartes Dispo: <b>${available.toFixed(2)} Gbps</b></div>`
+        title: `${escapeHtml(name)}
+        Capacité Cartes Dispo: ${available.toFixed(2)} Gbps`
       };
     });
 
@@ -80,7 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         to,
         label: `${available.toFixed(0)}G Dispo`,
         font: { background: 'white', size: 12, strokeWidth: 0 },
-        title: `<div style="text-align:left;">Lien: ${escapeHtml(lien.nom_depart ?? lien.from_name ?? '')} ➔ ${escapeHtml(lien.nom_arrivee ?? lien.to_name ?? '')}<br>Utilisé: ${used.toFixed(2)} / ${total} Gbps<br><b>Disponible: ${available.toFixed(2)} Gbps</b></div>`,
+        title: `Lien: ${escapeHtml(lien.nom_depart ?? lien.from_name ?? '')} ➔ ${escapeHtml(lien.nom_arrivee ?? lien.to_name ?? '')}
+        Utilisé: ${used.toFixed(2)} / ${total} Gbps
+        Disponible: ${available.toFixed(2)} Gbps`,
         color: { color, highlight: '#007bff', hover: '#007bff' },
         width: finalWidth,
         _finalWidth: finalWidth
@@ -207,15 +210,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // show result in UI
-  function showResult(message, type = 'info', path_names = []) {
-    let html = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${escapeHtml(message)}`;
-    if (type === 'success' && Array.isArray(path_names) && path_names.length) {
-      html += `<br><small>Meilleur chemin : <strong>${path_names.map(escapeHtml).join(' → ')}</strong></small>`;
+  function showResult(message, type, result_data = {}) {
+    // La variable result_data contiendra { path_names: [], backup_paths: [] }
+    const path_names = result_data.path_names || [];
+    const backup_paths = result_data.backup_paths || [];
+
+    let finalMessage = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${message}`;
+    
+    // Afficher le chemin principal
+    if (type === 'success' && path_names.length > 0) {
+        finalMessage += `<br><small><strong>Chemin Principal:</strong> ${path_names.join(' → ')}</small>`;
     }
-    resultZone.innerHTML = html;
+
+    // Afficher les chemins de secours s'il y en a
+    console.log(backup_paths)
+    if (type === 'success' && backup_paths.length > 0) {
+        finalMessage += `<hr style="margin: 8px 0; border-top: 1px solid #ccc;">`;
+        finalMessage += `<small><strong>Chemins de Secours Disponibles:</strong></small>`;
+        finalMessage += `<ul style="margin: 5px 0 0 20px; text-align: left; font-size: 0.8em;">`;
+        backup_paths.forEach(path => {
+            finalMessage += `<li>${path}</li>`;
+        });
+        finalMessage += `</ul>`;
+    }
+
+    resultZone.innerHTML = finalMessage;
     resultZone.className = `result-zone ${type}`;
     resultZone.style.display = 'block';
-  }
+}
 
   // fetch network state with verbose logging (for debugging)
   let currentFetchController = null;
@@ -298,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const result = await res.json();
       console.log('reserve_capacity response:', result);
-      showResult(result.message || 'Réponse inconnue', result.status || 'info', result.path_names || []);
+      showResult(result.message || 'Réponse inconnue', result.status || 'info', result);
       if (result.status === 'success') {
         await fetchNetworkState();
         if (result.path_ids) highlightPath(result.path_ids.map(String));

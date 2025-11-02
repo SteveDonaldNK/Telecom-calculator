@@ -273,3 +273,14 @@
 [03-Oct-2025 14:21:15 UTC] Database connection established
 [03-Oct-2025 14:21:15 UTC] Database insertion successful
 [03-Oct-2025 14:21:15 UTC] Session data set, redirecting to results.php
+[02-Nov-2025 16:44:33 UTC] POST request received
+[02-Nov-2025 16:44:33 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[02-Nov-2025 16:44:33 UTC] Validation passed, performing calculations
+[02-Nov-2025 16:44:33 UTC] Database connection established
+[02-Nov-2025 16:44:33 UTC] Database error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'optilink.calculations_4g' doesn't exist
+[02-Nov-2025 16:49:31 UTC] POST request received
+[02-Nov-2025 16:49:31 UTC] Input values: frequency=1800, bandwidth=20, extension_ratio=1.16
+[02-Nov-2025 16:49:31 UTC] Validation passed, performing calculations
+[02-Nov-2025 16:49:31 UTC] Database connection established
+[02-Nov-2025 16:49:31 UTC] Database insertion successful
+[02-Nov-2025 16:49:31 UTC] Session data set, redirecting to results.php
