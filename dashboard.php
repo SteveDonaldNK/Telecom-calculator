@@ -478,7 +478,7 @@ try {
                 <?php endif; ?>
             </div>
             <!-- Section Dimensionnements -->
-            <div class="dashboard-section">
+            <div class="dashboard-section full-width">
                 <h2><i class="fas fa-calculator"></i> Dimensionnements</h2>
                 <div class="calculation-buttons flex-column">
                     <a href="parameters.php?type=s1" class="calc-card calc-s1">
